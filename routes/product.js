@@ -4,6 +4,7 @@ import {
   saveFile,
   readFile,
 } from "../file-storage/fileServices.js";
+import { authenticate, authorizeRoles } from "../middleware/authenticate.js";
 
 const router = express.Router();
 await initStorage();
@@ -15,11 +16,12 @@ try {
   allProducts = [];
 }
 
+router.use(authenticate);
+
 //Create New Product
-router.post("/", async (req, res) => {
+router.post("/", authorizeRoles("admin", "user"), async (req, res) => {
   const title = req.body.title;
   const price = req.body.price;
-  // const newId = allProducts[allProducts.length - 1].id + 1 || 1;
   let newId;
 
   if (allProducts.length < 1) {
@@ -35,7 +37,7 @@ router.post("/", async (req, res) => {
 });
 
 // Get Product
-router.get("/:id", (req, res, next) => {
+router.get("/:id", authorizeRoles("admin"), (req, res, next) => {
   const id = parseInt(req.params.id);
   if (id) {
     const product = allProducts.find((product) => product.id === id);
@@ -52,7 +54,7 @@ router.get("/:id", (req, res, next) => {
 });
 
 //Update products
-router.put("/:id", async (req, res, next) => {
+router.put("/:id", authorizeRoles("admin", "user"), async (req, res, next) => {
   const id = parseInt(req.params.id);
   const newTitle = req.body.title;
   const newPrice = parseInt(req.body.price);
@@ -79,7 +81,7 @@ router.put("/:id", async (req, res, next) => {
 });
 
 //Delete products
-router.delete("/:id", async (req, res, next) => {
+router.delete("/:id", authorizeRoles("admin"), async (req, res, next) => {
   const id = parseInt(req.params.id);
   const check = allProducts.find((product) => product.id === id);
   if (check) {
