@@ -10,7 +10,7 @@ await initStorage();
 
 let allProducts;
 try {
-  allProducts = JSON.parse(await readFile("product.txt"));
+  allProducts = JSON.parse(await readFile("product.json"));
 } catch (err) {
   allProducts = [];
 }
@@ -19,12 +19,19 @@ try {
 router.post("/", async (req, res) => {
   const title = req.body.title;
   const price = req.body.price;
-  const newId = allProducts[allProducts.length - 1].id + 1;
+  // const newId = allProducts[allProducts.length - 1].id + 1 || 1;
+  let newId;
+
+  if (allProducts.length < 1) {
+    newId = 1;
+  } else {
+    newId = allProducts[allProducts.length - 1].id + 1 || 1;
+  }
 
   allProducts.push({ id: newId, title: title, price: price });
 
   res.status(200).json({ id: newId, title: title, price: price });
-  await saveFile("product.txt", JSON.stringify(allProducts));
+  await saveFile("product.json", JSON.stringify(allProducts));
 });
 
 // Get Product
@@ -65,7 +72,7 @@ router.put("/:id", async (req, res, next) => {
       error.status = 400;
       return next(error);
     }
-    await saveFile("product.txt", JSON.stringify(allProducts));
+    await saveFile("product.json", JSON.stringify(allProducts));
 
     res.status(200).json(product);
   }
@@ -78,7 +85,7 @@ router.delete("/:id", async (req, res, next) => {
   if (check) {
     const result = allProducts.filter((product) => product.id !== id);
     allProducts = result;
-    await saveFile("product.txt", JSON.stringify(allProducts));
+    await saveFile("product.json", JSON.stringify(allProducts));
     res.status(200).json(result);
   } else {
     const error = new Error(`Product with ${id} doesn't exist`);
