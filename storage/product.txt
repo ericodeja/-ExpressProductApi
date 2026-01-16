@@ -1,1 +1,0 @@
-[{"id":1,"title":"Car","price":1000},{"id":2,"title":"Bag","price":100},{"id":3,"title":"Shoe","price":200},{"id":4,"title":"Speaker","price":300},{"id":5,"title":"Laptop","price":400},{"id":6,"title":"Rice","price":500},{"id":7,"title":"phone","price":"800"},{"id":8,"title":"phone","price":"800"}]
